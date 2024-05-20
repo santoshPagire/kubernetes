@@ -1,0 +1,210 @@
+1. info - We have deployed a simple web application. Inspect the PODs and the Services
+Wait for the application to fully deploy and view the application using the link called Webapp Portal above your terminal.
+
+===========================================================
+
+2. What is the current color of the web application?
+Access the Webapp Portal.
+
+=> blue
+
+===========================================================
+
+3. info - Run the script named curl-test.sh to send multiple requests to test the web application. Take a note of the output.
+Execute the script at /root/curl-test.sh.
+
+controlplane ~ ➜  cat curl-test.sh 
+for i in {1..35}; do
+   kubectl exec --namespace=kube-public curl -- sh -c 'test=`wget -qO- -T 2  http://webapp-service.default.svc.cluster.local:8080/info 2>&1` && echo "$test OK" || echo "Failed"';
+   echo ""
+done
+
+
+controlplane ~ ➜  ./curl-test.sh 
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+
+===========================================================
+
+4. Inspect the deployment and identify the number of PODs deployed by it
+
+controlplane ~ ➜  kubectl get pods
+NAME                       READY   STATUS    RESTARTS   AGE
+frontend-685dfcc44-tv7gs   1/1     Running   0          2m56s
+frontend-685dfcc44-nbbbl   1/1     Running   0          2m56s
+frontend-685dfcc44-jlnj5   1/1     Running   0          2m56s
+frontend-685dfcc44-tkd94   1/1     Running   0          2m56s
+
+=> 4
+
+===========================================================
+
+5. What container image is used to deploy the applications?
+
+controlplane ~ ➜  kubectl describe deployments
+Name:                   frontend
+Namespace:              default
+CreationTimestamp:      Tue, 30 Apr 2024 06:57:29 +0000
+Labels:                 <none>
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               name=webapp
+Replicas:               4 desired | 4 updated | 4 total | 4 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        20
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  name=webapp
+  Containers:
+   simple-webapp:
+    Image:        kodekloud/webapp-color:v1
+    Port:         8080/TCP
+    Host Port:    0/TCP
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   frontend-685dfcc44 (4/4 replicas created)
+Events:
+  Type    Reason             Age    From                   Message
+  ----    ------             ----   ----                   -------
+  Normal  ScalingReplicaSet  3m41s  deployment-controller  Scaled up replica set frontend-685dfcc44 to 4
+
+=> kodekloud/webapp-color:v1
+
+===========================================================
+
+6. Inspect the deployment and identify the current strategy
+
+=> RollingUpdate
+
+===========================================================
+
+7. If you were to upgrade the application now what would happen?
+
+=> Pods are upgraded one at a time
+
+===========================================================
+
+8. Let us try that. Upgrade the application by setting the image on the deployment to kodekloud/webapp-color:v2
+Do not delete and re-create the deployment. Only set the new image name for the existing deployment.
+
+controlplane ~ ➜  kubectl edit deployment frontend 
+deployment.apps/frontend edited
+
+===========================================================
+
+9. Run the script curl-test.sh again. Notice the requests now hit both the old and newer versions. However none of them fail.
+Execute the script at /root/curl-test.sh.
+
+controlplane ~ ➜  ./curl-test.sh 
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v1 ; Color: blue OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+Hello, Application Version: v2 ; Color: green OK
+
+===========================================================
+
+10. Up to how many PODs can be down for upgrade at a time
+Consider the current strategy settings and number of PODs - 4
+
+=> 1
+
+===========================================================
+
+11. Change the deployment strategy to Recreate
+Delete and re-create the deployment if necessary. Only update the strategy type for the existing deployment.
+
+controlplane ~ ➜  kubectl edit deployment frontend 
+deployment.apps/frontend edited
+
+===========================================================
+
+12. Upgrade the application by setting the image on the deployment to kodekloud/webapp-color:v3
+Do not delete and re-create the deployment. Only set the new image name for the existing deployment.
+
+controlplane ~ ➜  kubectl edit deployment frontend 
+deployment.apps/frontend edited
+
+===========================================================
+
+13. Run the script curl-test.sh again. Notice the failures. Wait for the new application to be ready. Notice that the requests now do not hit both the versions
+Execute the script at /root/curl-test.sh.
+
+
+controlplane ~ ➜  ./curl-test.sh 
+Hello, Application Version: v3 ; Color: red OK
+Hello, Application Version: v3 ; Color: green OK
+Hello, Application Version: v3 ; Color: red OK
+Hello, Application Version: v3 ; Color: red OK
+Hello, Application Version: v3 ; Color: green OK
+Hello, Application Version: v3 ; Color: red OK
+

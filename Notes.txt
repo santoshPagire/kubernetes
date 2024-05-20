@@ -1,0 +1,140 @@
+*****************************************************************************************************************************************
+                                                           KUBERNETES
+*****************************************************************************************************************************************
+
+First Start minikube 
+*****************************************************
+
+TO get cluster info 
+==>kubectl cluster-info
+====================================================
+
+TO list all nodes
+==> kubectl get nodes
+******************************************************
+                          PODS
+******************************************************
+To create pods 
+==> kubectl run nginx --image=nginx
+===================================================
+
+To list all pods
+==> kubectl get pods
+====================================================
+
+To delete pod
+==> kubectl delete pod <pod_name> 
+====================================================
+
+To Describe pods or to see all information about pods 
+==> kubectl describe pod <pod_name>
+=======================================================
+
+To See additional info about pods
+==> kubectl get pods  -o wide
+********************************************************
+                        REPLICA SET
+********************************************************
+
+To create replica-set using Yaml file
+==> kubectl create -f <File_name e.g= replica.yml>
+========================================================
+
+To check list of replica sets
+==> kubectl get replicaset
+========================================================
+
+To describe replicaset
+==> kubectl describe replicaset <name_OF_replicaset>
+========================================================
+
+To edit Replicaset
+==> kubectl edit replicaset <name_OF_replicaset>
+========================================================
+
+To delete Replicaset
+==> kubectl delete replicaset <name_OF_replicaset>
+========================================================
+
+To replace OR update replicaset
+==> kubectl replace -f <file_name>
+========================================================
+
+To scale up or scale down replicasets
+==> kubectl scale --replicas=6 -f <File_name>
+*************************************************************************
+                                 DEPLOYMENTS
+*************************************************************************
+
+To create deployments using Yaml file
+==> kubectl create -f <File_name e.g= deployment.yml>
+==============================================================
+
+To check list of deployments
+==> kubectl get deployments
+==============================================================
+
+To describe deployment
+==> kubectl describe deployment <name_OF_depoyment>
+==============================================================
+
+To edit deployment
+==> kubectl edit deployment <name_OF_deployment>
+===============================================================
+
+To delete deployment
+==> kubectl delete replicaset <name_OF_deployment>
+===============================================================
+
+To see all deployments , replicasets ans services
+==> kubectl get all
+===============================================================
+
+To check the status of deployments
+==> kubectl rollout status <name_OF_deployments>
+===============================================================
+
+To see/check history of deployments
+==> kubectl rollout history <name_of_deployment>
+===============================================================
+
+To record the cause of change
+==> kubectl create -f deployment.yml --record
+=================================================================
+
+To give command or pass argument at runtime (suppose we want to specify any spefic image rather than we mentioned in yml file)
+==> kubectl set image deployment <name_of_deployment> <container_name>=<value_that_we_want_to_Specify>
+e.g: kubectl set image deployment myapp-deployment nginx=nginx:1.18-perl
+====================================================================
+
+To Undo the changes or undo the deployment
+==> kubectl rollout undo deployment/myapp-deployment
+**************************************************************************************************
+                                        SERVICES
+**************************************************************************************************
+
+To create service using Yaml file
+==> kubectl create -f <File_name e.g= service.yml>
+========================================================================
+
+To check list of service
+==> kubectl get svc OR service
+========================================================================
+
+To describe service
+==> kubectl describe service <name_OF_service>
+========================================================================
+
+To edit service
+==> kubectl edit deployment <name_OF_service>
+========================================================================
+
+To delete service
+==> kubectl delete service <name_OF_service>
+========================================================================
+
+To get Service Url
+==> minikube service <service_name> --url
+*****************************************************************************************************
+
+

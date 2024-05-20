@@ -1,0 +1,230 @@
+1. How many pods exist on the system?
+In the current(default) namespace.
+
+$ kubectl get pods
+No resources found in default namespace.
+
+=> 0
+
+===========================================================
+
+2. Create a new pod with the nginx image.
+
+$ kubectl run nginx --image=nginx
+pod/nginx created
+
+===========================================================
+
+3. How many pods are created now?
+Note: We have created a few more pods. So please check again.
+
+$ kubectl get pods
+NAME            READY   STATUS    RESTARTS   AGE
+nginx           1/1     Running   0          15s
+newpods-r9p86   1/1     Running   0          8s
+newpods-98dtz   1/1     Running   0          8s
+newpods-jkj8k   1/1     Running   0          8s
+
+=> 4
+
+===========================================================
+
+4. What is the image used to create the new pods?
+You must look at one of the new pods in detail to figure this out.
+
+$ kubectl describe pod newpods-r9p86
+Name:             newpods-r9p86
+Namespace:        default
+Priority:         0
+Service Account:  default
+Node:             controlplane/192.19.165.6
+Start Time:       Mon, 29 Apr 2024 10:40:49 +0000
+Labels:           tier=busybox
+Annotations:      <none>
+Status:           Running
+IP:               10.42.0.12
+IPs:
+  IP:           10.42.0.12
+Controlled By:  ReplicaSet/newpods
+Containers:
+  busybox:
+    Container ID:  containerd://34583707330023a01d8dad9d62257abea09cc935430bd7b6d8d2ccf7bc64a18e
+    Image:         busybox
+    Image ID:      docker.io/library/busybox@sha256:c3839dd800b9eb7603340509769c43e146a74c63dca3045a8e7dc8ee07e53966
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sleep
+      1000
+    State:          Running
+      Started:      Mon, 29 Apr 2024 10:40:51 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-8z949 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-8z949:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  83s   default-scheduler  Successfully assigned default/newpods-r9p86 to controlplane
+  Normal  Pulling    82s   kubelet            Pulling image "busybox"
+  Normal  Pulled     81s   kubelet            Successfully pulled image "busybox" in 539ms (539ms including waiting)
+  Normal  Created    81s   kubelet            Created container busybox
+  Normal  Started    81s   kubelet            Started container busybox
+
+=> BUSYBOX
+
+===========================================================
+
+5. Which nodes are these pods placed on?
+You must look at all the pods in detail to figure this out.
+
+=> CONTROLPANE
+
+===========================================================
+
+6. How many containers are part of the pod webapp?
+Note: We just created a new POD. Ignore the state of the POD for now.
+
+$ kubectl describe pod webapp 
+Name:             webapp
+Namespace:        default
+Priority:         0
+Service Account:  default
+Node:             controlplane/192.19.165.6
+Start Time:       Mon, 29 Apr 2024 10:43:28 +0000
+Labels:           <none>
+Annotations:      <none>
+Status:           Pending
+IP:               10.42.0.13
+IPs:
+  IP:  10.42.0.13
+Containers:
+  nginx:
+    Container ID:   containerd://7c8e900d80a62d48b1c882a5777cab7af3d689decf8f83508f857729ee3ebbec
+    Image:          nginx
+    Image ID:       docker.io/library/nginx@sha256:ed6d2c43c8fbcd3eaa44c9dab6d94cb346234476230dc1681227aa72d07181ee
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Mon, 29 Apr 2024 10:43:29 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-7f87f (ro)
+  agentx:
+    Container ID:   
+    Image:          agentx
+    Image ID:       
+    Port:           <none>
+    Host Port:      <none>
+    State:          Waiting
+      Reason:       ErrImagePull
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-7f87f (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-7f87f:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age                From               Message
+  ----     ------     ----               ----               -------
+  Normal   Scheduled  33s                default-scheduler  Successfully assigned default/webapp to controlplane
+  Normal   Pulling    33s                kubelet            Pulling image "nginx"
+  Normal   Pulled     33s                kubelet            Successfully pulled image "nginx" in 165ms (165ms including waiting)
+  Normal   Created    33s                kubelet            Created container nginx
+  Normal   Started    33s                kubelet            Started container nginx
+  Normal   Pulling    21s (x2 over 33s)  kubelet            Pulling image "agentx"
+  Warning  Failed     20s (x2 over 33s)  kubelet            Failed to pull image "agentx": failed to pull and unpack image "docker.io/library/agentx:latest": failed to resolve reference "docker.io/library/agentx:latest": pull access denied, repository does not exist or may require authorization: server message: insufficient_scope: authorization failed
+  Warning  Failed     20s (x2 over 33s)  kubelet            Error: ErrImagePull
+  Normal   BackOff    9s (x3 over 32s)   kubelet            Back-off pulling image "agentx"
+  Warning  Failed     9s (x3 over 32s)   kubelet            Error: ImagePullBackOff
+
+=> 2
+
+===========================================================
+
+7. What images are used in the new webapp pod?
+You must look at all the pods in detail to figure this out.
+
+=> nginx & agentx
+
+===========================================================
+
+8. What is the state of the container agentx in the pod webapp?
+Wait for it to finish the ContainerCreating state
+
+=> Error or Waiting
+
+===========================================================
+
+9. Why do you think the container agentx in pod webapp is in error?
+Try to figure it out from the events section of the pod.
+
+=> A Docker image with this name doesn't exist on Docker Hub
+
+===========================================================
+
+10. What does the READY column in the output of the kubectl get pods command indicate?
+
+=> Running Containers in POD/Total Containers in POD
+
+===========================================================
+
+11. Delete the webapp Pod.
+Once deleted, wait for the pod to fully terminate.
+
+$ kubectl delete pod webapp
+pod "webapp" deleted
+
+===========================================================
+
+12. Create a new pod with the name redis and the image redis123.
+Use a pod-definition YAML file. And yes the image name is wrong!
+
+$ kubectl run redis --image=redis123
+pod/redis created
+
+===========================================================
+
+13. Now change the image on this pod to redis.
+Once done, the pod should be in a running state.
+
+$kubectl edit pod redis
+pod/redis edited
